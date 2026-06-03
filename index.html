@@ -35,7 +35,6 @@
       justify-content: space-between;
       align-items: center;
       padding: 24px 48px;
-      mix-blend-mode: normal;
       background: rgba(247,245,242,0.88);
       backdrop-filter: blur(12px);
       border-bottom: 1px solid rgba(0,0,0,0.06);
@@ -177,19 +176,6 @@
       color: var(--mid);
     }
 
-    .hero-img-placeholder svg {
-      width: 52px;
-      height: 52px;
-      opacity: 0.4;
-    }
-
-    .hero-img-placeholder span {
-      font-size: 0.75rem;
-      letter-spacing: 0.14em;
-      text-transform: uppercase;
-      opacity: 0.5;
-    }
-
     .hero-tag {
       position: absolute;
       bottom: 40px;
@@ -235,6 +221,7 @@
     .portfolio-filters {
       display: flex;
       gap: 8px;
+      flex-wrap: wrap;
     }
 
     .filter-btn {
@@ -247,11 +234,12 @@
       cursor: pointer;
       transition: all 0.2s;
       color: var(--mid);
+      font-family: 'DM Sans', sans-serif;
     }
 
-    .filter-btn.active, .filter-btn:hover {
+    .filter-btn.active,
+    .filter-btn:hover {
       border-color: var(--black);
-      color: var(--black);
       background: var(--black);
       color: var(--white);
     }
@@ -262,37 +250,29 @@
       gap: 20px;
     }
 
+    /* Default layout */
     .portfolio-item {
       position: relative;
       overflow: hidden;
       cursor: pointer;
       background: #e8e3dc;
+      display: none; /* hidden by default, shown by JS */
     }
 
-    .portfolio-item:nth-child(1) { grid-column: span 2; aspect-ratio: 16/9; }
-    .portfolio-item:nth-child(2) { aspect-ratio: 3/4; }
-    .portfolio-item:nth-child(3) { aspect-ratio: 3/4; }
-    .portfolio-item:nth-child(4) { aspect-ratio: 3/4; }
-    .portfolio-item:nth-child(5) { grid-column: span 2; aspect-ratio: 16/9; }
-    .portfolio-item:nth-child(6) { aspect-ratio: 3/4; grid-column: span 1; }
+    .portfolio-item.visible { display: block; }
+
+    /* Aspect ratios */
+    .portfolio-item[data-span="2"] { grid-column: span 2; aspect-ratio: 16/9; }
+    .portfolio-item[data-span="1"] { aspect-ratio: 3/4; }
 
     .portfolio-placeholder {
       width: 100%;
       height: 100%;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      gap: 8px;
+      min-height: 200px;
+      background-size: cover;
+      background-position: center;
       transition: transform 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94);
     }
-
-    .p1 { background: linear-gradient(135deg, #d4ccc0, #c0b49e); }
-    .p2 { background: linear-gradient(135deg, #c8bfb0, #b8a990); }
-    .p3 { background: linear-gradient(135deg, #e0d8ce, #cfc4b4); }
-    .p4 { background: linear-gradient(135deg, #bfb5a4, #aea294); }
-    .p5 { background: linear-gradient(135deg, #d8d0c4, #c8bca8); }
-    .p6 { background: linear-gradient(135deg, #ccc2b2, #bcb09e); }
 
     .portfolio-item:hover .portfolio-placeholder { transform: scale(1.04); }
 
@@ -324,19 +304,7 @@
       text-transform: uppercase;
       color: rgba(255,255,255,0.6);
       margin-top: 4px;
-    }
-
-    .placeholder-icon {
-      width: 32px; height: 32px;
-      opacity: 0.3;
-      color: #888;
-    }
-
-    .placeholder-label {
-      font-size: 0.65rem;
-      letter-spacing: 0.12em;
-      text-transform: uppercase;
-      color: #aaa;
+      display: block;
     }
 
     /* ── ABOUT ── */
@@ -349,13 +317,9 @@
 
     .about-img {
       aspect-ratio: 4/5;
-      background: linear-gradient(155deg, #ddd7ce, #c8bfb0);
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      gap: 12px;
-      color: var(--mid);
+      background-size: cover;
+      background-position: center;
+      background-color: linear-gradient(155deg, #ddd7ce, #c8bfb0);
       position: relative;
     }
 
@@ -592,20 +556,62 @@
     @media (max-width: 900px) {
       nav { padding: 20px 24px; }
       .nav-links { display: none; }
-      .hero { grid-template-columns: 1fr; min-height: auto; }
+
+      .hero {
+        grid-template-columns: 1fr;
+        min-height: auto;
+      }
       .hero-left { padding: 100px 24px 48px; }
-      .hero-right { height: 60vw; }
+      .hero-right { height: 70vw; }
+
       section { padding: 72px 24px; }
-      .portfolio-grid { grid-template-columns: 1fr 1fr; }
-      .portfolio-item:nth-child(1),
-      .portfolio-item:nth-child(5) { grid-column: span 2; }
-      #about { grid-template-columns: 1fr; }
+
+      .portfolio-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 24px;
+      }
+
+      .portfolio-filters { gap: 6px; }
+      .filter-btn { padding: 7px 14px; font-size: 0.68rem; }
+
+      .portfolio-grid {
+        grid-template-columns: 1fr 1fr;
+        gap: 12px;
+      }
+
+      /* On mobile: all items take 1 column unless span-2 */
+      .portfolio-item[data-span="2"] { grid-column: span 2; }
+      .portfolio-item[data-span="1"] { grid-column: span 1; }
+
+      #about {
+        grid-template-columns: 1fr;
+        gap: 40px;
+      }
       .about-img { display: none; }
       .about-content { padding-right: 0; }
-      .contact-grid { grid-template-columns: 1fr; gap: 48px; }
+
+      .about-stats { gap: 24px; flex-wrap: wrap; }
+
+      .contact-grid {
+        grid-template-columns: 1fr;
+        gap: 48px;
+      }
       .form-row { grid-template-columns: 1fr; }
-      .portfolio-header { flex-direction: column; align-items: flex-start; gap: 20px; }
-      footer { flex-direction: column; gap: 8px; padding: 24px; }
+
+      footer {
+        flex-direction: column;
+        gap: 8px;
+        padding: 24px;
+        text-align: center;
+      }
+    }
+
+    @media (max-width: 480px) {
+      .portfolio-grid { grid-template-columns: 1fr; gap: 10px; }
+      .portfolio-item[data-span="2"],
+      .portfolio-item[data-span="1"] { grid-column: span 1; aspect-ratio: 4/3; }
+      .social-links { flex-wrap: wrap; gap: 12px; }
     }
   </style>
 </head>
@@ -638,15 +644,7 @@
     </div>
     <div class="hero-right">
       <div class="hero-img-placeholder"
-        style="background-image:url('photo07.webp');
-            background-size:cover;
-            background-position:center;">
-        <svg class="placeholder-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2">
-          <rect x="3" y="3" width="18" height="18" rx="2"/>
-          <circle cx="8.5" cy="8.5" r="1.5"/>
-          <path d="M21 15l-5-5L5 21"/>
-        </svg>
-        <span>Add your hero photo here</span>
+        style="background-image:url('photo07.webp'); background-size:cover; background-position:center; width:100%; height:100%;">
       </div>
       <div class="hero-tag">RoyalRay Photography</div>
     </div>
@@ -660,126 +658,70 @@
         <h2 class="section-title">The <em>Portfolio</em></h2>
       </div>
       <div class="portfolio-filters">
-        <button class="filter-btn active">All</button>
-        <button class="filter-btn">Couples</button>
-        <button class="filter-btn">Portraits</button>
-        <button class="filter-btn">Lifestyle</button>
-        <button class="filter-btn">Weddings</button>
+        <button class="filter-btn active" data-filter="all">All</button>
+        <button class="filter-btn" data-filter="couples">Couples</button>
+        <button class="filter-btn" data-filter="portraits">Portraits</button>
+        <button class="filter-btn" data-filter="lifestyle">Lifestyle</button>
+        <button class="filter-btn" data-filter="weddings">Weddings</button>
       </div>
     </div>
 
-    <div class="portfolio-grid">
+    <div class="portfolio-grid" id="portfolioGrid">
 
-  <div class="portfolio-item">
-    <div class="portfolio-placeholder"
-         style="background-image:url('photo01.webp'); background-size:cover; background-position:center;">
-    </div>
-    <div class="portfolio-overlay">
-      <h3>Golden Hour Couples</h3>
-      <span>Couples · Tasmania</span>
-    </div>
-  </div>
-
-  <div class="portfolio-item">
-    <div class="portfolio-placeholder"
-         style="background-image:url('photo02.webp'); background-size:cover; background-position:center;">
-    </div>
-    <div class="portfolio-overlay">
-      <h3>Editorial Portrait</h3>
-      <span>Portrait · Studio</span>
-    </div>
-  </div>
-
-  <div class="portfolio-item">
-    <div class="portfolio-placeholder"
-         style="background-image:url('photo03.webp'); background-size:cover; background-position:center;">
-    </div>
-    <div class="portfolio-overlay">
-      <h3>Lifestyle Content</h3>
-      <span>Lifestyle · Brand</span>
-    </div>
-  </div>
-
-  <div class="portfolio-item">
-    <div class="portfolio-placeholder"
-         style="background-image:url('photo04.webp'); background-size:cover; background-position:center;">
-    </div>
-    <div class="portfolio-overlay">
-      <h3>Wedding Day</h3>
-      <span>Wedding · Ceremony</span>
-    </div>
-  </div>
-
-  <div class="portfolio-item">
-    <div class="portfolio-placeholder"
-         style="background-image:url('photo05.webp'); background-size:cover; background-position:center;">
-    </div>
-    <div class="portfolio-overlay">
-      <h3>Restaurant Media</h3>
-      <span>Commercial · Hobart</span>
-    </div>
-  </div>
-
-  <div class="portfolio-item">
-    <div class="portfolio-placeholder"
-         style="background-image:url('photo06.webp'); background-size:cover; background-position:center;">
-    </div>
-    <div class="portfolio-overlay">
-      <h3>Street & Fashion</h3>
-      <span>Fashion · Outdoor</span>
-    </div>
-  </div>
-
-</div>
-        <div class="portfolio-overlay"><h3>Golden Hour Couples</h3><span>Couples · Tasmania</span></div>
-      </div>
-      <div class="portfolio-item">
-        <div class="portfolio-placeholder p2">
-          <svg class="placeholder-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="M21 15l-5-5L5 21"/></svg>
-          <span class="placeholder-label">Replace with your photo</span>
+      <div class="portfolio-item visible" data-category="couples" data-span="2">
+        <div class="portfolio-placeholder" style="background-image:url('photo01.webp');"></div>
+        <div class="portfolio-overlay">
+          <h3>Golden Hour Couples</h3>
+          <span>Couples · Tasmania</span>
         </div>
-        <div class="portfolio-overlay"><h3>Editorial Portrait</h3><span>Portrait · Studio</span></div>
       </div>
-      <div class="portfolio-item">
-        <div class="portfolio-placeholder p3">
-          <svg class="placeholder-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="M21 15l-5-5L5 21"/></svg>
-          <span class="placeholder-label">Replace with your photo</span>
+
+      <div class="portfolio-item visible" data-category="portraits" data-span="1">
+        <div class="portfolio-placeholder" style="background-image:url('photo02.webp');"></div>
+        <div class="portfolio-overlay">
+          <h3>Editorial Portrait</h3>
+          <span>Portrait · Studio</span>
         </div>
-        <div class="portfolio-overlay"><h3>Lifestyle Content</h3><span>Lifestyle · Brand</span></div>
       </div>
-      <div class="portfolio-item">
-        <div class="portfolio-placeholder p4">
-          <svg class="placeholder-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="M21 15l-5-5L5 21"/></svg>
-          <span class="placeholder-label">Replace with your photo</span>
+
+      <div class="portfolio-item visible" data-category="lifestyle" data-span="1">
+        <div class="portfolio-placeholder" style="background-image:url('photo03.webp');"></div>
+        <div class="portfolio-overlay">
+          <h3>Lifestyle Content</h3>
+          <span>Lifestyle · Brand</span>
         </div>
-        <div class="portfolio-overlay"><h3>Wedding Day</h3><span>Wedding · Ceremony</span></div>
       </div>
-      <div class="portfolio-item">
-        <div class="portfolio-placeholder p5">
-          <svg class="placeholder-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="M21 15l-5-5L5 21"/></svg>
-          <span class="placeholder-label">Replace with your photo</span>
+
+      <div class="portfolio-item visible" data-category="weddings" data-span="1">
+        <div class="portfolio-placeholder" style="background-image:url('photo04.webp');"></div>
+        <div class="portfolio-overlay">
+          <h3>Wedding Day</h3>
+          <span>Wedding · Ceremony</span>
         </div>
-        <div class="portfolio-overlay"><h3>Restaurant Media</h3><span>Commercial · Hobart</span></div>
       </div>
-      <div class="portfolio-item">
-        <div class="portfolio-placeholder p6">
-          <svg class="placeholder-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="M21 15l-5-5L5 21"/></svg>
-          <span class="placeholder-label">Replace with your photo</span>
+
+      <div class="portfolio-item visible" data-category="lifestyle" data-span="2">
+        <div class="portfolio-placeholder" style="background-image:url('photo05.webp');"></div>
+        <div class="portfolio-overlay">
+          <h3>Restaurant Media</h3>
+          <span>Commercial · Hobart</span>
         </div>
-        <div class="portfolio-overlay"><h3>Street & Fashion</h3><span>Fashion · Outdoor</span></div>
       </div>
+
+      <div class="portfolio-item visible" data-category="portraits" data-span="1">
+        <div class="portfolio-placeholder" style="background-image:url('photo06.webp');"></div>
+        <div class="portfolio-overlay">
+          <h3>Street &amp; Fashion</h3>
+          <span>Fashion · Outdoor</span>
+        </div>
+      </div>
+
     </div>
   </section>
 
   <!-- ABOUT -->
   <section id="about">
-    <div class="about-img"
-     style="background-image:url('photo10.webp');
-            background-size:cover;
-            background-position:center;">
-      <svg style="width:44px;height:44px;opacity:0.3;color:#888" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/></svg>
-      <span style="font-size:0.65rem;letter-spacing:0.12em;text-transform:uppercase;color:#aaa">Add your photo here</span>
-    </div>
+    <div class="about-img" style="background-image:url('photo10.webp');"></div>
     <div class="about-content">
       <p class="section-label">About Me</p>
       <h2 class="section-title">Behind the <em>Lens</em></h2>
@@ -824,8 +766,8 @@
             <span class="contact-detail-value">Hobart, Tasmania, Australia</span>
           </div>
           <div class="contact-detail-item">
-            <span class="contact-detail-label">PHONE</span>
-            <span class="contact-detail-value">0431568701</span>
+            <span class="contact-detail-label">Phone</span>
+            <span class="contact-detail-value">0431 568 701</span>
           </div>
           <div class="contact-detail-item">
             <span class="contact-detail-label">Email</span>
@@ -838,11 +780,7 @@
         </div>
 
         <div class="social-links">
-          <a href="https://instagram.com/hareesh_rajapaksha"
-   class="social-link"
-   target="_blank">
-   Instagram
-</a>
+          <a href="https://instagram.com/hareesh_rajapaksha" class="social-link" target="_blank">
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="2" y="2" width="20" height="20" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r="0.5" fill="currentColor"/></svg>
             Instagram
           </a>
@@ -887,7 +825,7 @@
           <label>Message</label>
           <textarea placeholder="Tell me about your project, date, vision…"></textarea>
         </div>
-        <button class="btn-send">Send Message →</button>
+        <button class="btn-send" id="sendBtn">Send Message →</button>
       </div>
     </div>
   </section>
@@ -900,15 +838,30 @@
   </footer>
 
   <script>
-    // Filter buttons (visual only)
-    document.querySelectorAll('.filter-btn').forEach(btn => {
+    // ── PORTFOLIO FILTER ──
+    const filterBtns = document.querySelectorAll('.filter-btn');
+    const portfolioItems = document.querySelectorAll('.portfolio-item');
+
+    filterBtns.forEach(btn => {
       btn.addEventListener('click', () => {
-        document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+        // Update active button
+        filterBtns.forEach(b => b.classList.remove('active'));
         btn.classList.add('active');
+
+        const filter = btn.getAttribute('data-filter');
+
+        portfolioItems.forEach(item => {
+          const category = item.getAttribute('data-category');
+          if (filter === 'all' || category === filter) {
+            item.classList.add('visible');
+          } else {
+            item.classList.remove('visible');
+          }
+        });
       });
     });
 
-    // Scroll reveal
+    // ── SCROLL REVEAL ──
     const observer = new IntersectionObserver((entries) => {
       entries.forEach(e => {
         if (e.isIntersecting) {
@@ -916,7 +869,7 @@
           e.target.style.transform = 'translateY(0)';
         }
       });
-    }, { threshold: 0.1 });
+    }, { threshold: 0.08 });
 
     document.querySelectorAll('.portfolio-item, .about-img, .about-content, .contact-info, .contact-form').forEach(el => {
       el.style.opacity = '0';
@@ -925,8 +878,8 @@
       observer.observe(el);
     });
 
-    // Form submit feedback
-    document.querySelector('.btn-send').addEventListener('click', function() {
+    // ── FORM SUBMIT FEEDBACK ──
+    document.getElementById('sendBtn').addEventListener('click', function() {
       this.textContent = 'Sent ✓';
       this.style.background = '#a8c4a0';
       setTimeout(() => {
